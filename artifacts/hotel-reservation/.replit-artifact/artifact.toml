@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Hotel Reservation System"
+version = "1.0.0"
+id = "artifacts/hotel-reservation"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21506
+
+[services.development]
+run = "pnpm --filter @workspace/hotel-reservation run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hotel-reservation", "run", "build" ]
+publicDir = "artifacts/hotel-reservation/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21506"
+BASE_PATH = "/"

@@ -1,0 +1,58 @@
+Role: You are an Expert UI/UX Engineer, HCI Specialist, and Senior React Developer.
+
+Task: Build a complete, interactive Single Page Application (SPA) prototype for a premium Hotel Reservation System. Do not just write static HTML; use React state to make the prototype clickable and navigable between different views.
+
+Tech Stack: React, Tailwind CSS, Lucide React (for icons), and Framer Motion (for micro-interactions and smooth transitions).
+
+Global UI/UX & HCI Requirements:
+
+    Nielsen's Heuristics: >     * Error Prevention: Disable past dates in all date pickers. Prevent form submission if required fields are empty.
+
+        Visibility of System Status: Use active states for navigation and a clear progress bar during the checkout flow.
+
+        User Control: Allow users to easily navigate back or clear filters.
+
+    Atomic Design & Architecture: Build modular, reusable components (Atoms like buttons/inputs, Molecules like search bars, Organisms like hotel cards).
+
+    Localization Readiness: Use logical CSS properties (e.g., ms-, me-, ps-, pe- in Tailwind) to ensure the layout can easily flip for RTL (Arabic) languages without breaking.
+
+    Loading States: Implement skeleton loaders for data fetching simulations.
+
+Views to Implement (with specific requirements):
+
+1. Landing & Home View:
+
+    Hero Section: A clean, immersive background with a highly visible, centered Search Component (Location, Check-in/Check-out, Guests) utilizing the F-Pattern for scanning.
+
+    Quick Access: Display a row of "Trending Destinations" below the fold.
+
+2. Search Results & Filtering View:
+
+    Layout: A strict 12-column desktop grid. 3 columns for the interactive Sidebar Filters (Price range slider, Star rating checkboxes, Amenities), and 9 columns for the Main Results.
+
+    Micro-interactions: Hotel cards should have a subtle hover effect (slight lift and shadow) providing immediate visual feedback.
+
+3. Hotel Details View:
+
+    Information Architecture: High-quality image gallery at the top.
+
+    Data Grouping: Group room types and their specific amenities cleanly.
+
+    Composition Relationship: Visually encapsulate "Add-on Services" (like extra beds or breakfast) within the specific room booking container, showing they are strictly dependent on that room selection.
+
+    Sticky CTA: Keep the "Book Now" summary and button visible on the side as the user scrolls through the hotel details.
+
+4. Checkout & Booking Flow:
+
+    Progressive Disclosure: Break the checkout into distinct, clear steps using a visual progress indicator (1. Room Details -> 2. Guest Info -> 3. Payment).
+
+    Minimalist Form: Only ask for essential information. Clearly format the price breakdown (Base price + Taxes + Add-ons) before the final confirmation button.
+
+5. User Dashboard (Post-Booking):
+
+    Data Grid: A clean table or card list showing "Upcoming" and "Past" bookings with colored status badges.
+
+    Gamification/Progression: Include a small "Loyalty Status" section featuring a visual progression map (e.g., a tiered path showing how many bookings are left until they reach the next tier for free upgrades), applying gamification principles to encourage retention.
+
+Execution Instructions:
+Create the full working prototype. Use dummy JSON data for the hotels and bookings. Implement a simulated navigation state to allow the user to click from the Home page -> Search Results -> Hotel Details -> Checkout -> Dashboard. Focus heavily on clean white space, aesthetic minimalism, and immediate visual feedback for all interactions.
