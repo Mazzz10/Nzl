@@ -1,4 +1,4 @@
-import { Hotel, Destination, Booking } from '../types';
+import { Hotel, Destination, Booking, AddOn } from '../types';
 
 export const trendingDestinations: Destination[] = [
   { id: '1', name: 'Paris', country: 'France', image: 'bg-gradient-to-tr from-blue-900 to-amber-200' },

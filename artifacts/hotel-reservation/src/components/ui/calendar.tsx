@@ -14,7 +14,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 function Calendar({
   className,
   classNames,
-  showOutsideDays = true,
+  showOutsideDays = false,
   captionLayout = "label",
   buttonVariant = "ghost",
   formatters,
@@ -29,7 +29,8 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "bg-background group/calendar p-3 [--cell-size:2rem] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+        // Increased cell size from 2.75rem → 3.25rem for more breathing room
+        "bg-background group/calendar p-0 [--cell-size:3.25rem] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
@@ -43,10 +44,14 @@ function Calendar({
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
         months: cn(
-          "relative flex flex-col gap-4 md:flex-row",
+          // Increased gap between the two months
+          "relative flex flex-col gap-8 md:flex-row md:gap-10",
           defaultClassNames.months
         ),
-        month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
+        month: cn(
+          "flex w-full flex-col gap-4 rounded-xl border border-border/40 bg-background/70 p-2",
+          defaultClassNames.month
+        ),
         nav: cn(
           "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
           defaultClassNames.nav
@@ -78,19 +83,29 @@ function Calendar({
           defaultClassNames.dropdown
         ),
         caption_label: cn(
-          "select-none font-medium",
+          "select-none font-bold",
           captionLayout === "label"
-            ? "text-sm"
+            // Larger, bolder month+year heading like in Image 1
+            ? "text-[1.45rem] tracking-tight leading-none"
             : "[&>svg]:text-muted-foreground flex h-8 items-center gap-1 rounded-md pl-2 pr-1 text-sm [&>svg]:size-3.5",
           defaultClassNames.caption_label
         ),
         table: "w-full border-collapse",
-        weekdays: cn("flex", defaultClassNames.weekdays),
+
+        // More spacing below the weekday row divider
+        weekdays: cn(
+          "mb-2 flex gap-2 border-b border-border/60 pb-3",
+          defaultClassNames.weekdays
+        ),
+
         weekday: cn(
-          "text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal",
+          // Slightly larger, clear day-of-week labels (Su Mo Tu…)
+          "text-foreground/70 flex-1 select-none rounded-md text-[0.92rem] font-semibold text-center",
           defaultClassNames.weekday
         ),
-        week: cn("mt-2 flex w-full", defaultClassNames.week),
+
+        // More vertical gap between weeks
+        week: cn("mt-2 flex w-full gap-2", defaultClassNames.week),
         week_number_header: cn(
           "w-[--cell-size] select-none",
           defaultClassNames.week_number_header
@@ -100,25 +115,22 @@ function Calendar({
           defaultClassNames.week_number
         ),
         day: cn(
-          "group/day relative aspect-square h-full w-full select-none p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md",
+          "group/day relative h-[--cell-size] flex-1 select-none p-0 text-center text-foreground/95 [&:first-child[data-selected=true]_button]:rounded-l-lg [&:last-child[data-selected=true]_button]:rounded-r-lg",
           defaultClassNames.day
         ),
-        range_start: cn(
-          "bg-accent rounded-l-md",
-          defaultClassNames.range_start
-        ),
+        range_start: cn("rounded-l-lg", defaultClassNames.range_start),
         range_middle: cn("rounded-none", defaultClassNames.range_middle),
-        range_end: cn("bg-accent rounded-r-md", defaultClassNames.range_end),
+        range_end: cn("rounded-r-lg", defaultClassNames.range_end),
         today: cn(
-          "bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none",
+          "rounded-lg data-[selected=true]:rounded-none",
           defaultClassNames.today
         ),
         outside: cn(
-          "text-muted-foreground aria-selected:text-muted-foreground",
+          "text-foreground/20 aria-selected:text-foreground/20",
           defaultClassNames.outside
         ),
         disabled: cn(
-          "text-muted-foreground opacity-50",
+          "text-muted-foreground opacity-40",
           defaultClassNames.disabled
         ),
         hidden: cn("invisible", defaultClassNames.hidden),
@@ -179,6 +191,7 @@ function CalendarDayButton({
   ...props
 }: React.ComponentProps<typeof DayButton>) {
   const defaultClassNames = getDefaultClassNames()
+  const customModifiers = modifiers as Record<string, boolean>
 
   const ref = React.useRef<HTMLButtonElement>(null)
   React.useEffect(() => {
@@ -200,8 +213,37 @@ function CalendarDayButton({
       data-range-start={modifiers.range_start}
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
+      data-outside={modifiers.outside}
+      data-active-check-in={customModifiers.activeCheckIn}
+      data-active-check-out={customModifiers.activeCheckOut}
       className={cn(
-        "data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70",
+        // ── Selection colours: BLUE to match website palette ───────────────
+        // Single selected day
+        "data-[selected-single=true]:bg-blue-600 data-[selected-single=true]:text-white",
+        // Range start / end — filled blue circles
+        "data-[range-start=true]:bg-blue-600 data-[range-start=true]:text-white",
+        "data-[range-end=true]:bg-blue-600 data-[range-end=true]:text-white",
+        // Range middle — very light blue tint
+        "data-[range-middle=true]:bg-blue-100 data-[range-middle=true]:text-blue-900",
+        // Active-field ring: stronger outer highlight for clear visibility.
+        "data-[active-check-in=true]:ring-4 data-[active-check-in=true]:ring-blue-900 data-[active-check-in=true]:ring-offset-2 data-[active-check-in=true]:ring-offset-background data-[active-check-in=true]:scale-105",
+        "data-[active-check-out=true]:ring-4 data-[active-check-out=true]:ring-blue-900 data-[active-check-out=true]:ring-offset-2 data-[active-check-out=true]:ring-offset-background data-[active-check-out=true]:scale-105",
+        // Active-field weight: first day bold for Check In, second day bold for Check Out.
+        "data-[active-check-in=true]:font-bold data-[active-check-out=true]:font-bold",
+        "group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50",
+        // Hover
+        "hover:bg-blue-50",
+        // Make outside-month days clearly secondary and non-interactive.
+        "data-[outside=true]:text-foreground/20 data-[outside=true]:font-medium data-[outside=true]:opacity-75 data-[outside=true]:hover:bg-transparent data-[outside=true]:pointer-events-none",
+        // ── Layout ─────────────────────────────────────────────────────────
+        "mx-auto inline-flex h-[--cell-size] w-[--cell-size] min-w-[--cell-size] items-center justify-center rounded-full px-0",
+        // Keep numbers readable; active date gets bold via active modifiers.
+        "tabular-nums text-[1.05rem] font-medium leading-none",
+        "transition-colors",
+        "data-[range-end=true]:rounded-full",
+        "data-[range-middle=true]:rounded-md",
+        "data-[range-start=true]:rounded-full",
+        "group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px]",
         defaultClassNames.day,
         className
       )}

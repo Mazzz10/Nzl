@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { SearchParams } from '../types';
 
-export type AppView = 
+export type AppView =
   | { name: 'home' }
   | { name: 'search_results'; params: SearchParams }
   | { name: 'hotel_details'; hotelId: string; params: SearchParams }
   | { name: 'checkout'; hotelId: string; roomId: string; params: SearchParams; selectedAddOns: string[] }
+  | { name: 'sign_in' }
+  | { name: 'sign_up' }
   | { name: 'dashboard' };
 
 export function useAppState() {
