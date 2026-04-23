@@ -13,7 +13,7 @@ export default function Home({ navigateTo }: { navigateTo: ReturnType<typeof use
       <Navbar navigateTo={navigateTo} />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 md:pt-32 md:pb-40 px-4 overflow-hidden flex-1 flex flex-col justify-center bg-slate-900">
+      <section className="relative flex flex-1 flex-col justify-center overflow-hidden bg-slate-900 px-4 pb-20 pt-20 sm:pb-28 sm:pt-24 md:pb-40 md:pt-32">
         <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2200&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/78 via-black/62 to-black/72" />
 
@@ -22,13 +22,13 @@ export default function Home({ navigateTo }: { navigateTo: ReturnType<typeof use
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center max-w-3xl mx-auto mb-12"
+            className="mx-auto mb-8 max-w-3xl text-center sm:mb-10 md:mb-12"
           >
-            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white font-medium mb-6 leading-tight">
+            <h1 className="mb-4 font-serif text-3xl font-medium leading-tight text-white sm:mb-5 sm:text-4xl md:mb-6 md:text-6xl lg:text-7xl">
               {t('homeHeroTitle')}
             </h1>
-            <div className="mx-auto max-w-2xl rounded-xl bg-black/35 px-5 py-3 backdrop-blur-[2px]">
-              <p className="text-lg md:text-xl text-white/95 font-light">
+            <div className="mx-auto max-w-2xl rounded-xl bg-black/35 px-4 py-3 backdrop-blur-[2px] sm:px-5">
+              <p className="text-base font-light text-white/95 sm:text-lg md:text-xl">
                 {t('homeHeroSubtitle')}
               </p>
             </div>

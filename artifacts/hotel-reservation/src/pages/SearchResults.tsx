@@ -45,7 +45,7 @@ export default function SearchResults({ params, navigateTo }: { params: SearchPa
 
       {/* Top Bar */}
       <div className="bg-card border-b border-border sticky top-16 z-40">
-        <div className="container mx-auto px-4 py-4 flex justify-end items-center">
+        <div className="container mx-auto flex items-center justify-end px-4 py-3 sm:py-4">
           <div className="w-full sm:w-auto">
             <SearchBar
               initialParams={params}
@@ -56,20 +56,34 @@ export default function SearchResults({ params, navigateTo }: { params: SearchPa
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 flex-1">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="container mx-auto flex-1 px-4 py-5 sm:py-6 md:py-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
 
           {/* Mobile Filter Toggle */}
-          <div className="lg:hidden flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-serif font-semibold">{t('resultsPropertiesFound', { count: sampleHotels.length })}</h1>
+          <div className="mb-2 flex items-center justify-between lg:hidden">
+            <h1 className="font-serif text-xl font-semibold sm:text-2xl">{t('resultsPropertiesFound', { count: sampleHotels.length })}</h1>
             <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
               <Filter className="mr-2 h-4 w-4" /> {t('resultsFilters')}
             </Button>
           </div>
 
+          <div className="mb-3 lg:hidden">
+            <Select defaultValue="recommended">
+              <SelectTrigger className="h-10 w-full" data-testid="select-sort-mobile">
+                <SelectValue placeholder={t('resultsSortBy')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recommended">{t('resultsRecommended')}</SelectItem>
+                <SelectItem value="price-low">{t('resultsPriceLow')}</SelectItem>
+                <SelectItem value="price-high">{t('resultsPriceHigh')}</SelectItem>
+                <SelectItem value="rating">{t('resultsGuestRating')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Left Sidebar Filters - 3 columns */}
-          <div className={`lg:col-span-3 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-sm lg:sticky lg:top-40 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto">
+          <div className={`lg:col-span-3 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6 lg:sticky lg:top-40 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="font-semibold text-lg">{t('resultsFilters')}</h2>
                 <Button variant="ghost" size="sm" className="h-8 text-muted-foreground hover:text-foreground px-2" data-testid="button-clear-filters">
@@ -128,7 +142,7 @@ export default function SearchResults({ params, navigateTo }: { params: SearchPa
           </div>
 
           {/* Results Area - 9 columns */}
-          <div className="lg:col-span-9 space-y-6">
+          <div className="lg:col-span-9 space-y-5 sm:space-y-6">
             <div className="hidden lg:flex justify-between items-center mb-6">
               <h1 className="text-2xl font-serif font-semibold">{t('resultsPropertiesFound', { count: sampleHotels.length })}</h1>
               <div className="flex items-center gap-2">

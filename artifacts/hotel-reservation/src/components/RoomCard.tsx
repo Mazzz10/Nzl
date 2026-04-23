@@ -46,16 +46,16 @@ export default function RoomCard({ room, isSelected, selectedAddOns, onSelect, o
           )}
         </div>
 
-        <CardContent className="flex-1 p-6">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="font-serif text-2xl font-semibold">{localizedRoomText.name}</h3>
+        <CardContent className="flex-1 p-4 sm:p-6">
+          <div className="mb-2 flex flex-wrap justify-between gap-3 sm:items-start">
+            <h3 className="font-serif text-xl font-semibold sm:text-2xl">{localizedRoomText.name}</h3>
             <div className="text-right">
-              <span className="text-2xl font-bold font-serif">${room.pricePerNight}</span>
+              <span className="font-serif text-xl font-bold sm:text-2xl">${room.pricePerNight}</span>
               <span className="text-sm text-muted-foreground block">{t('hotelPerNight')}</span>
             </div>
           </div>
 
-          <div className="flex gap-4 text-sm text-muted-foreground mb-4">
+          <div className="mb-4 flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:gap-4">
             <span className="flex items-center gap-1"><BedDouble className="h-4 w-4" /> {localizedRoomText.bedType}</span>
             <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {t('roomUpToGuests', { count: room.maxGuests })}</span>
           </div>
@@ -66,7 +66,7 @@ export default function RoomCard({ room, isSelected, selectedAddOns, onSelect, o
             <h4 className="text-sm font-medium mb-3">{t('roomOptionalAddons')}</h4>
             <div className="space-y-3">
               {addOns.map(addon => (
-                <div key={addon.id} className="flex items-center justify-between">
+                <div key={addon.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id={`addon-${room.id}-${addon.id}`}
@@ -78,7 +78,7 @@ export default function RoomCard({ room, isSelected, selectedAddOns, onSelect, o
                       {getLocalizedAddOnName(addon, language)}
                     </Label>
                   </div>
-                  <span className="text-sm text-muted-foreground">+${addon.price} {addon.type === 'per_night' ? t('roomAddonPerNight') : t('roomAddonPerStay')}</span>
+                  <span className="text-sm text-muted-foreground sm:text-right">+${addon.price} {addon.type === 'per_night' ? t('roomAddonPerNight') : t('roomAddonPerStay')}</span>
                 </div>
               ))}
             </div>

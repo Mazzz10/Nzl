@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar';
 import RoomCard from '../components/RoomCard';
 import BookingSummary from '../components/BookingSummary';
 import { motion } from 'framer-motion';
-import { MapPin, Star, ChevronLeft, Wifi, Coffee, Dumbbell, PawPrint } from 'lucide-react';
+import { MapPin, Star, ChevronLeft, ChevronRight, Wifi, Coffee, Dumbbell, PawPrint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -94,6 +94,17 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
 
   const mainImage = hotelGallery[selectedImageIndex] ?? hotelGallery[0];
 
+  const goToPreviousImage = () => {
+    setSelectedImageIndex((prevIndex) => {
+      if (prevIndex === 0) return hotelGallery.length - 1;
+      return prevIndex - 1;
+    });
+  };
+
+  const goToNextImage = () => {
+    setSelectedImageIndex((prevIndex) => (prevIndex + 1) % hotelGallery.length);
+  };
+
   const localizeAmenity = (amenity: string) => {
     switch (amenity.toLowerCase()) {
       case 'pool':
@@ -129,10 +140,10 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar navigateTo={navigateTo} />
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-4 sm:py-6">
         <Button
           variant="outline"
-          className="mb-6 h-11 rounded-full border-primary/30 bg-primary/5 px-4 font-semibold text-primary shadow-sm transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          className="mb-5 h-11 rounded-full border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary shadow-sm transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground sm:mb-6 sm:text-base"
           onClick={() => navigateTo({ name: 'search_results', params })}
           data-testid="button-back-to-search"
         >
@@ -147,13 +158,13 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
                 <Star key={i} className="h-4 w-4 fill-secondary text-secondary" />
               ))}
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-semibold mb-2">{hotel.name}</h1>
-            <div className="flex items-center text-muted-foreground">
+            <h1 className="mb-2 font-serif text-3xl font-semibold sm:text-4xl md:text-5xl">{hotel.name}</h1>
+            <div className="flex items-center text-sm text-muted-foreground sm:text-base">
               <MapPin className="h-4 w-4 me-1" />
               {localizedHotelText.location}
             </div>
           </div>
-          <div className="flex items-center gap-3 bg-muted/30 px-4 py-2 rounded-lg">
+          <div className="flex w-full items-center justify-between gap-3 rounded-lg bg-muted/30 px-4 py-2 sm:w-auto sm:justify-normal">
             <div className="text-right">
               <div className="font-medium text-sm">{t('detailsExcellent')}</div>
               <div className="text-xs text-muted-foreground">{hotel.reviewCount} {t('detailsReviews')}</div>
@@ -165,11 +176,18 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
         </div>
 
         {/* Image Gallery */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 h-[58vh] min-h-[420px]">
-          <button
-            type="button"
-            className="group md:col-span-2 relative h-full overflow-hidden rounded-2xl border border-border/60 bg-card"
+        <div className="mb-10 grid grid-cols-1 gap-4 md:mb-12 md:grid-cols-3 md:h-[58vh] md:min-h-[420px]">
+          <div
+            className="group relative min-h-[250px] overflow-hidden rounded-2xl border border-border/60 bg-card md:col-span-2 md:h-full"
             onClick={() => setIsGalleryOpen(true)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setIsGalleryOpen(true);
+              }
+            }}
+            role="button"
+            tabIndex={0}
             data-testid="button-main-photo"
           >
             <img
@@ -179,8 +197,35 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
               className="absolute inset-0 h-full w-full object-cover opacity-30 blur-sm scale-105"
             />
             <div className="absolute inset-0 bg-black/5" />
+            <button
+              type="button"
+              className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/65"
+              onClick={(event) => {
+                event.stopPropagation();
+                goToPreviousImage();
+              }}
+              aria-label="Previous image"
+              data-testid="button-main-photo-prev"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/65"
+              onClick={(event) => {
+                event.stopPropagation();
+                goToNextImage();
+              }}
+              aria-label="Next image"
+              data-testid="button-main-photo-next"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+            <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+              {selectedImageIndex + 1} / {hotelGallery.length}
+            </div>
             <img src={mainImage} alt={`${hotel.name} main photo`} className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]" />
-          </button>
+          </div>
           <div className="hidden md:flex h-full min-h-0 flex-col rounded-2xl border border-border/60 bg-card/30 p-2">
             <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
               {hotelGallery.map((image, idx) => {
@@ -210,14 +255,14 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
           {/* Main Content */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="space-y-10 lg:col-span-8 lg:space-y-12">
 
             {/* Description & Amenities */}
             <section>
               <h2 className="font-serif text-2xl font-semibold mb-4">{t('detailsAboutProperty')}</h2>
-              <p className="text-muted-foreground leading-relaxed text-lg mb-8">
+              <p className="mb-8 text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {localizedHotelText.description}
               </p>
 
@@ -260,7 +305,7 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {hotel.reviews.map(review => (
-                  <div key={review.id} className="bg-muted/20 p-6 rounded-xl border border-border/50">
+                  <div key={review.id} className="rounded-xl border border-border/50 bg-muted/20 p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <Avatar>
@@ -299,11 +344,11 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
       </div>
 
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-        <DialogContent className="max-w-[min(95vw,1200px)] rounded-2xl p-0 overflow-hidden">
-          <div className="border-b border-border/60 px-6 py-4">
-            <DialogTitle className="font-serif text-3xl">{t('detailsPhotosTitle', { name: hotel.name })}</DialogTitle>
+        <DialogContent className="max-h-[92vh] max-w-[min(95vw,1200px)] overflow-hidden rounded-2xl p-0">
+          <div className="border-b border-border/60 px-4 py-4 sm:px-6">
+            <DialogTitle className="font-serif text-2xl sm:text-3xl">{t('detailsPhotosTitle', { name: hotel.name })}</DialogTitle>
           </div>
-          <div className="max-h-[75vh] overflow-y-auto p-6">
+          <div className="max-h-[72vh] overflow-y-auto p-4 sm:p-6">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {hotelGallery.map((image, idx) => (
                 <button

@@ -58,11 +58,11 @@ export default function HotelCard({ hotel, onClick }: HotelCardProps) {
   return (
     <motion.div
       whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0,0,0,0.12)" }}
-      className="group flex flex-col md:flex-row bg-card rounded-2xl overflow-hidden border border-border shadow-sm cursor-pointer transition-colors hover:border-primary/20"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-colors hover:border-primary/20 sm:flex-row"
       onClick={onClick}
       data-testid={`card-hotel-${hotel.id}`}
     >
-      <div className="relative h-48 md:h-auto md:w-72 flex-shrink-0 overflow-hidden bg-muted">
+      <div className="relative h-52 shrink-0 overflow-hidden bg-muted sm:h-auto sm:w-56 md:w-72">
         <img
           src={imageUrl}
           alt={`${hotel.name} hotel`}
@@ -72,16 +72,16 @@ export default function HotelCard({ hotel, onClick }: HotelCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
       </div>
 
-      <div className="flex flex-col flex-grow p-6 z-10 bg-card">
-        <div className="flex justify-between items-start gap-4">
+      <div className="z-10 flex flex-grow flex-col bg-card p-4 sm:p-5 md:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-1 mb-1">
               {Array.from({ length: hotel.stars }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-secondary text-secondary" />
               ))}
             </div>
-            <h3 className="font-serif text-2xl font-semibold text-foreground mb-1">{hotel.name}</h3>
-            <div className="flex items-center text-muted-foreground text-sm">
+            <h3 className="mb-1 font-serif text-xl font-semibold text-foreground sm:text-2xl">{hotel.name}</h3>
+            <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
               <MapPin className="h-3.5 w-3.5 me-1" />
               {localizedHotelText.location}
             </div>
@@ -112,14 +112,14 @@ export default function HotelCard({ hotel, onClick }: HotelCardProps) {
           )}
         </div>
 
-        <div className="mt-auto pt-6 flex items-end justify-between">
+        <div className="mt-auto flex flex-col gap-4 pt-5 sm:flex-row sm:items-end sm:justify-between sm:pt-6">
           <div>
             <span className="text-xs text-muted-foreground block mb-0.5">{t('hotelStartingFrom')}</span>
-            <span className="text-2xl font-serif font-bold text-foreground">${hotel.pricePerNight}</span>
+            <span className="text-xl font-serif font-bold text-foreground sm:text-2xl">${hotel.pricePerNight}</span>
             <span className="text-sm text-muted-foreground"> {t('hotelPerNight')}</span>
           </div>
           <Button
-            className="transition-colors duration-200 hover:bg-primary/80"
+            className="w-full transition-colors duration-200 hover:bg-primary/80 sm:w-auto"
             onClick={(e) => { e.stopPropagation(); onClick(); }}
             data-testid={`button-view-details-${hotel.id}`}
           >

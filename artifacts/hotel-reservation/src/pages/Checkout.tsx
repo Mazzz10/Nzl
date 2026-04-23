@@ -203,7 +203,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-center max-w-md"
+            className="max-w-md text-center"
           >
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <motion.div
@@ -214,8 +214,8 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                 <Check className="h-12 w-12 text-primary" />
               </motion.div>
             </div>
-            <h1 className="font-serif text-4xl font-semibold mb-4">{t('checkoutConfirmedTitle')}</h1>
-            <p className="text-muted-foreground text-lg mb-8">
+            <h1 className="mb-4 font-serif text-3xl font-semibold sm:text-4xl">{t('checkoutConfirmedTitle')}</h1>
+            <p className="mb-8 text-base text-muted-foreground sm:text-lg">
               {t('checkoutConfirmedText', { hotel: hotel.name, email: formData.email })}
             </p>
             <div className="animate-pulse text-sm text-primary font-medium">
@@ -231,10 +231,10 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
     <div className="flex flex-col min-h-screen bg-muted/20">
       <Navbar navigateTo={navigateTo} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-5 sm:py-8">
         <Button
           variant="ghost"
-          className="mb-8 pl-0 hover:bg-transparent hover:text-primary"
+          className="mb-5 pl-0 hover:bg-transparent hover:text-primary sm:mb-8"
           onClick={() => step > 1 ? setStep(step - 1) : navigateTo({ name: 'hotel_details', hotelId, params })}
           data-testid="button-back-checkout"
         >
@@ -242,23 +242,23 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
         </Button>
 
         {/* Stepper */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="flex items-center justify-between relative">
-            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-border -z-10" />
+        <div className="mx-auto mb-8 max-w-4xl sm:mb-12">
+          <div className="relative flex items-start justify-between gap-2 sm:items-center">
+            <div className="absolute left-0 top-4 h-1 w-full -z-10 bg-border sm:top-1/2 sm:-translate-y-1/2" />
             <div
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-primary -z-10 transition-all duration-500"
+              className="absolute left-0 top-4 h-1 -z-10 bg-primary transition-all duration-500 sm:top-1/2 sm:-translate-y-1/2"
               style={{ width: `${((step - 1) / 2) * 100}%` }}
             />
 
             {[1, 2, 3].map(num => (
-              <div key={num} className="flex flex-col items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-300 ${step > num ? 'bg-primary text-primary-foreground' :
+              <div key={num} className="flex flex-1 flex-col items-center">
+                <div className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-300 sm:h-10 sm:w-10 ${step > num ? 'bg-primary text-primary-foreground' :
                   step === num ? 'bg-primary text-primary-foreground ring-4 ring-primary/20' :
                     'bg-card text-muted-foreground border-2 border-border'
                   }`}>
                   {step > num ? <Check className="h-5 w-5" /> : num}
                 </div>
-                <span className={`mt-2 text-xs font-medium ${step >= num ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className={`mt-1 text-center text-[11px] font-medium sm:mt-2 sm:text-xs ${step >= num ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {num === 1 ? t('checkoutStepRoom') : num === 2 ? t('checkoutStepGuest') : t('checkoutStepPayment')}
                 </span>
               </div>
@@ -266,7 +266,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
           {/* Main Content */}
           <div className="lg:col-span-8">
             <AnimatePresence mode="wait">
@@ -281,11 +281,11 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                 {/* Step 1: Room Details */}
                 {step === 1 && (
                   <Card className="border-border/50 shadow-sm" data-testid="checkout-step-1">
-                    <CardContent className="p-8">
-                      <h2 className="font-serif text-2xl font-semibold mb-6">{t('checkoutReviewSelection')}</h2>
+                    <CardContent className="p-5 sm:p-8">
+                      <h2 className="mb-5 font-serif text-xl font-semibold sm:mb-6 sm:text-2xl">{t('checkoutReviewSelection')}</h2>
 
-                      <div className="flex flex-col sm:flex-row gap-6 mb-8">
-                        <div className="h-32 sm:w-48 rounded-lg overflow-hidden bg-muted/20 flex-shrink-0">
+                      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:gap-6">
+                        <div className="h-40 overflow-hidden rounded-lg bg-muted/20 sm:h-32 sm:w-48 sm:flex-shrink-0">
                           {selectedRoomImage ? (
                             <img
                               src={selectedRoomImage}
@@ -306,7 +306,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                         </div>
                       </div>
 
-                      <Button className="w-full h-12 text-lg transition-colors duration-200 hover:bg-primary/80" onClick={() => setStep(2)} data-testid="button-continue-1">
+                      <Button className="h-12 w-full text-base transition-colors duration-200 hover:bg-primary/80 sm:text-lg" onClick={() => setStep(2)} data-testid="button-continue-1">
                         {t('checkoutContinueGuest')}
                       </Button>
                     </CardContent>
@@ -316,10 +316,10 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                 {/* Step 2: Guest Info */}
                 {step === 2 && (
                   <Card className="border-border/50 shadow-sm" data-testid="checkout-step-2">
-                    <CardContent className="p-8">
-                      <h2 className="font-serif text-2xl font-semibold mb-6">{t('checkoutGuestInfo')}</h2>
+                    <CardContent className="p-5 sm:p-8">
+                      <h2 className="mb-5 font-serif text-xl font-semibold sm:mb-6 sm:text-2xl">{t('checkoutGuestInfo')}</h2>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="firstName">{t('checkoutFirstName')}</Label>
                           <div className="relative">
@@ -400,7 +400,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                       </div>
 
                       <Button
-                        className="w-full h-12 text-lg transition-colors duration-200 hover:bg-primary/80"
+                        className="h-12 w-full text-base transition-colors duration-200 hover:bg-primary/80 sm:text-lg"
                         onClick={handleContinueToPayment}
                         data-testid="button-continue-2"
                       >
@@ -413,8 +413,8 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                 {/* Step 3: Payment */}
                 {step === 3 && (
                   <Card className="border-border/50 shadow-sm" data-testid="checkout-step-3">
-                    <CardContent className="p-8">
-                      <h2 className="font-serif text-2xl font-semibold mb-6">{t('checkoutPaymentMethod')}</h2>
+                    <CardContent className="p-5 sm:p-8">
+                      <h2 className="mb-5 font-serif text-xl font-semibold sm:mb-6 sm:text-2xl">{t('checkoutPaymentMethod')}</h2>
 
                       <div className="bg-muted/30 p-4 rounded-lg flex items-center justify-between mb-8 border border-border/50">
                         <div className="flex items-center gap-3">
@@ -447,7 +447,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                           />
                           {cardNumberError && <p className="text-xs text-destructive">{cardNumberError}</p>}
                         </div>
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
                           <div className="space-y-2">
                             <Label htmlFor="expiry">{t('checkoutExpiryDate')}</Label>
                             <Input
@@ -504,7 +504,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                       </div>
 
                       <Button
-                        className="w-full h-12 text-lg transition-colors duration-200 hover:bg-primary/80"
+                        className="h-12 w-full text-base transition-colors duration-200 hover:bg-primary/80 sm:text-lg"
                         onClick={handleConfirmBooking}
                         data-testid="button-confirm-booking"
                       >

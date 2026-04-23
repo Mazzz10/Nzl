@@ -22,7 +22,7 @@ export default function BookingSummary({ room, params, selectedAddOnIds, onBook,
 
   if (!room) {
     return (
-      <Card className="sticky top-24" data-testid="card-booking-summary-empty">
+      <Card className="lg:sticky lg:top-24" data-testid="card-booking-summary-empty">
         <CardHeader>
           <CardTitle className="font-serif text-xl">{t('summaryYourStay')}</CardTitle>
         </CardHeader>
@@ -50,17 +50,17 @@ export default function BookingSummary({ room, params, selectedAddOnIds, onBook,
   const total = subtotal + taxes;
 
   return (
-    <Card className="sticky top-24 shadow-lg border-primary/10" data-testid="card-booking-summary">
+    <Card className="border-primary/10 shadow-lg lg:sticky lg:top-24" data-testid="card-booking-summary">
       <CardHeader className="pb-4">
         <CardTitle className="font-serif text-xl">{t('summaryBooking')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex gap-4 p-4 bg-muted/30 rounded-lg">
-          <div className="space-y-1 flex-1 border-r border-border/50">
+        <div className="grid gap-3 rounded-lg bg-muted/30 p-4 sm:grid-cols-2 sm:gap-4">
+          <div className="flex-1 space-y-1 border-b border-border/50 pb-3 sm:border-b-0 sm:border-e sm:pb-0 sm:pe-3">
             <span className="text-xs text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" /> {t('summaryCheckIn')}</span>
             <div className="font-medium text-sm">{format(checkInDate, 'MMM d, yyyy')}</div>
           </div>
-          <div className="space-y-1 flex-1 ps-2">
+          <div className="flex-1 space-y-1 sm:ps-1">
             <span className="text-xs text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" /> {t('summaryCheckOut')}</span>
             <div className="font-medium text-sm">{format(checkOutDate, 'MMM d, yyyy')}</div>
           </div>
@@ -103,7 +103,7 @@ export default function BookingSummary({ room, params, selectedAddOnIds, onBook,
 
         <div className="flex justify-between items-end">
           <span className="font-semibold text-lg">{t('summaryTotal')}</span>
-          <span className="font-serif text-3xl font-bold text-primary">${total.toFixed(2)}</span>
+          <span className="font-serif text-2xl font-bold text-primary sm:text-3xl">${total.toFixed(2)}</span>
         </div>
       </CardContent>
 

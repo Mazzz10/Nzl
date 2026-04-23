@@ -57,7 +57,7 @@ export default function Dashboard({ navigateTo }: { navigateTo: ReturnType<typeo
     <div className="flex flex-col min-h-screen bg-muted/20">
       <Navbar navigateTo={navigateTo} />
 
-      <div className="bg-card border-b border-border py-12">
+      <div className="bg-card border-b border-border py-8 sm:py-12">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -65,20 +65,20 @@ export default function Dashboard({ navigateTo }: { navigateTo: ReturnType<typeo
             className="max-w-5xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
           >
             <div>
-              <h1 className="font-serif text-3xl md:text-4xl font-semibold mb-2">{t('dashboardWelcomeBack', { name: 'Mazen' })}</h1>
+              <h1 className="mb-2 font-serif text-2xl font-semibold sm:text-3xl md:text-4xl">{t('dashboardWelcomeBack', { name: 'Mazen' })}</h1>
               <p className="text-muted-foreground">{t('dashboardManageText')}</p>
             </div>
 
-            <div className="flex gap-6 p-4 bg-muted/30 rounded-xl border border-border/50 w-full md:w-auto">
-              <div className="text-center px-4 border-r border-border">
+            <div className="grid w-full grid-cols-3 gap-2 rounded-xl border border-border/50 bg-muted/30 p-3 sm:p-4 md:w-auto md:gap-6">
+              <div className="border-r border-border px-2 text-center sm:px-4">
                 <div className="text-2xl font-semibold font-serif text-primary">3</div>
                 <div className="text-xs text-muted-foreground uppercase tracking-wider">{t('dashboardBookings')}</div>
               </div>
-              <div className="text-center px-4 border-r border-border">
+              <div className="border-r border-border px-2 text-center sm:px-4">
                 <div className="text-2xl font-semibold font-serif text-primary">12</div>
                 <div className="text-xs text-muted-foreground uppercase tracking-wider">{t('dashboardNights')}</div>
               </div>
-              <div className="text-center px-4">
+              <div className="px-2 text-center sm:px-4">
                 <div className="text-2xl font-semibold font-serif text-primary">850</div>
                 <div className="text-xs text-muted-foreground uppercase tracking-wider">{t('dashboardPoints')}</div>
               </div>
@@ -87,12 +87,12 @@ export default function Dashboard({ navigateTo }: { navigateTo: ReturnType<typeo
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 flex-1">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto flex-1 px-4 py-8 sm:py-12">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 lg:grid-cols-3">
 
           {/* Main Content - Bookings */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
               <h2 className="font-serif text-2xl font-semibold">{t('dashboardYourTrips')}</h2>
               <Button onClick={() => navigateTo({ name: 'home' })} variant="outline" size="sm" data-testid="button-book-another">
                 <Search className="mr-2 h-4 w-4" /> {t('dashboardBookAnother')}
@@ -151,7 +151,7 @@ export default function Dashboard({ navigateTo }: { navigateTo: ReturnType<typeo
                             </div>
                           </div>
 
-                          <div className="mt-6 flex gap-3">
+                          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                             <Button variant="outline" size="sm" className="w-full sm:w-auto">{t('dashboardViewItinerary')}</Button>
                             <Button variant="outline" size="sm" className="w-full sm:w-auto text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive">{t('dashboardCancel')}</Button>
                           </div>
@@ -215,7 +215,7 @@ export default function Dashboard({ navigateTo }: { navigateTo: ReturnType<typeo
 
           {/* Sidebar - Loyalty */}
           <div className="lg:col-span-1">
-            <h2 className="font-serif text-2xl font-semibold mb-6">{t('dashboardRewards')}</h2>
+            <h2 className="mb-5 font-serif text-xl font-semibold sm:mb-6 sm:text-2xl">{t('dashboardRewards')}</h2>
             <LoyaltyProgress />
           </div>
 

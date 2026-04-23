@@ -20,18 +20,18 @@ export default function LoyaltyProgress() {
 
   return (
     <Card className="overflow-hidden border-primary/10 shadow-md bg-gradient-to-br from-card to-muted/30" data-testid="card-loyalty">
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-8">
+      <CardContent className="p-4 sm:p-6">
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Award className="h-6 w-6 text-slate-400" />
-              <h3 className="font-serif text-2xl font-semibold">{t('loyaltySilverMember')}</h3>
+              <h3 className="font-serif text-xl font-semibold sm:text-2xl">{t('loyaltySilverMember')}</h3>
             </div>
             <p className="text-sm text-muted-foreground">{t('loyaltyAwayFromGold', { count: targetBookings - currentBookings })}</p>
           </div>
-          <div className="text-right">
-            <div className="text-3xl font-serif font-bold text-primary">850</div>
-            <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+          <div className="text-left sm:text-right">
+            <div className="font-serif text-2xl font-bold text-primary sm:text-3xl">850</div>
+            <div className="flex items-center justify-start gap-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:justify-end">
               <span>{t('dashboardPoints')}</span>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -51,7 +51,7 @@ export default function LoyaltyProgress() {
           </div>
         </div>
 
-        <div className="relative mb-10 pt-4">
+        <div className="relative mb-8 pt-4 sm:mb-10">
           <Progress value={progress} dir={isRtl ? 'rtl' : 'ltr'} className="h-2 bg-muted" />
 
           <div dir={isRtl ? 'rtl' : 'ltr'} className="absolute top-0 left-0 w-full flex justify-between transform -translate-y-1/2 mt-5">
@@ -59,13 +59,13 @@ export default function LoyaltyProgress() {
               const Icon = tier.icon;
               return (
                 <div key={tier.name} className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-card border-2 ${tier.active ? `border-primary ${tier.color}` : 'border-muted text-muted-foreground'} z-10 relative`}>
+                  <div className={`h-7 w-7 rounded-full border-2 bg-card ${tier.active ? `border-primary ${tier.color}` : 'border-muted text-muted-foreground'} relative z-10 flex items-center justify-center sm:h-8 sm:w-8`}>
                     <Icon className="h-4 w-4" />
                     {tier.name === t('loyaltySilver') && (
                       <span className="absolute -inset-1 rounded-full animate-ping bg-primary/20" />
                     )}
                   </div>
-                  <span className={`text-xs mt-2 font-medium ${tier.active ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span className={`mt-2 text-[10px] font-medium sm:text-xs ${tier.active ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {tier.name}
                   </span>
                 </div>

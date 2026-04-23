@@ -28,7 +28,7 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
         <div className="flex min-h-screen flex-col bg-muted/20">
             <Navbar navigateTo={navigateTo} />
 
-            <div className="container mx-auto flex flex-1 items-center justify-center px-4 py-10">
+            <div className="container mx-auto flex flex-1 items-center justify-center px-4 py-6 sm:py-10">
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -37,7 +37,7 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
                 >
                     <Card className="border-border/70 shadow-md" data-testid="card-signin">
                         <CardHeader className="space-y-2">
-                            <CardTitle className="font-serif text-3xl">{t('signInTitle')}</CardTitle>
+                            <CardTitle className="font-serif text-2xl sm:text-3xl">{t('signInTitle')}</CardTitle>
                             <CardDescription>{t('signInDescription')}</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -71,7 +71,7 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between gap-3">
+                                <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                                     <div className="flex items-center gap-2">
                                         <Checkbox
                                             id="remember-me"
@@ -83,7 +83,7 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
                                     </div>
                                     <button
                                         type="button"
-                                        className="text-sm text-primary hover:underline"
+                                        className="text-sm text-primary hover:underline sm:text-right"
                                         onClick={() => navigateTo({ name: 'home' })}
                                         data-testid="button-signin-forgot"
                                     >
