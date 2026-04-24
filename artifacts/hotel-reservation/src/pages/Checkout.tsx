@@ -356,7 +356,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            placeholder="name"
+                            placeholder="example@gmail.com"
                             title={t('checkoutEmailTitle')}
                             aria-invalid={Boolean(emailError)}
                             required
