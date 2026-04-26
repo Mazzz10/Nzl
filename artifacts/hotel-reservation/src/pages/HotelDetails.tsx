@@ -93,6 +93,7 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
   const selectedRoom = hotel.roomTypes.find(r => r.id === selectedRoomId) || null;
 
   const mainImage = hotelGallery[selectedImageIndex] ?? hotelGallery[0];
+  const locationMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(localizedHotelText.location)}&output=embed`;
 
   const goToPreviousImage = () => {
     setSelectedImageIndex((prevIndex) => {
@@ -274,6 +275,20 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
                     <span>{localizeAmenity(amenity)}</span>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-8">
+                <h2 className="mb-4 font-serif text-2xl font-bold">Location & Neighborhood</h2>
+                <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+                  <iframe
+                    title={`Map for ${hotel.name}`}
+                    src={locationMapUrl}
+                    className="h-48 w-full md:h-80"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    style={{ filter: 'grayscale(0.45) saturate(0.55) contrast(1.02) brightness(1.04)' }}
+                  />
+                </div>
               </div>
             </section>
 

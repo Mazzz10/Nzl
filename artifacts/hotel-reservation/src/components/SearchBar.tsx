@@ -42,6 +42,8 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
   const [rooms, setRooms] = useState(Math.max(1, initialParams?.rooms ?? 1));
   const [isCompactMobileOpen, setIsCompactMobileOpen] = useState(false);
 
+  const hoverableFieldClass = 'transition-colors duration-200 hover:border-border/70 hover:bg-muted/70';
+  const searchButtonHoverClass = 'transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg';
   const guests = adults + children;
   const guestWord = guests > 1 ? t('searchGuestsPlural') : t('searchGuest');
   const roomWord = rooms > 1 ? t('searchRoomsPlural') : t('searchRoom');
@@ -291,7 +293,7 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
 
               <Button
                 type="submit"
-                className={`h-11 w-full gap-2 rounded-full ${isRtl ? 'flex-row-reverse' : ''}`}
+                className={`h-11 w-full gap-2 rounded-full ${searchButtonHoverClass} ${isRtl ? 'flex-row-reverse' : ''}`}
                 data-testid="button-compact-mobile-search"
                 disabled={!checkIn || !checkOut}
               >
@@ -397,7 +399,7 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
 
         <Button
           type="submit"
-          className={`h-10 w-full gap-2 rounded-xl lg:h-10 lg:w-auto lg:rounded-full ${isRtl ? 'flex-row-reverse' : ''}`}
+          className={`h-10 w-full gap-2 rounded-xl lg:h-10 lg:w-auto lg:rounded-full ${searchButtonHoverClass} ${isRtl ? 'flex-row-reverse' : ''}`}
           data-testid="button-compact-search"
           disabled={!checkIn || !checkOut}
         >
@@ -427,7 +429,7 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
                   onFocus={() => setIsDestinationOpen(true)}
                   onClick={() => setIsDestinationOpen(true)}
                   placeholder={t('searchDestinationPlaceholder')}
-                  className="h-12 border-transparent bg-muted/50 pl-12 text-sm focus-visible:bg-transparent focus-visible:ring-2 focus-visible:ring-blue-500 md:text-base"
+                  className={`h-12 border-transparent bg-muted/50 pl-12 text-sm focus-visible:bg-transparent focus-visible:ring-2 focus-visible:ring-blue-500 md:text-base ${hoverableFieldClass}`}
                   data-testid="input-hero-destination"
                 />
               </div>
@@ -474,14 +476,14 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
                   id="checkIn"
                   type="button"
                   onClick={() => setActiveDateField('checkIn')}
-                  className={`h-12 w-full rounded-md border border-transparent bg-muted/50 pl-12 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 data-[state=open]:ring-2 data-[state=open]:ring-blue-500 data-[state=open]:ring-offset-1 md:text-base ${textAlignClass}`}
+                  className={`h-12 w-full rounded-md border border-transparent bg-muted/50 pl-12 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 data-[state=open]:ring-2 data-[state=open]:ring-blue-500 data-[state=open]:ring-offset-1 md:text-base ${hoverableFieldClass} ${textAlignClass}`}
                   data-testid="input-hero-checkin"
                 >
                   {displayDate(checkIn)}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-[min(96vw,46rem)] rounded-[1.5rem] border border-border/60 bg-background p-3 shadow-xl sm:p-4" align="start">
-                <div className="inline-flex flex-col gap-4">
+              <PopoverContent className="w-fit max-w-[96vw] rounded-[1.5rem] border border-border/60 bg-background p-3 shadow-xl sm:p-3" align="start">
+                <div className="inline-flex w-fit flex-col gap-2">
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <button
                       type="button"
@@ -519,14 +521,14 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
                   id="checkOut"
                   type="button"
                   onClick={() => setActiveDateField('checkOut')}
-                  className={`h-12 w-full rounded-md border border-transparent bg-muted/50 pl-12 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 data-[state=open]:ring-2 data-[state=open]:ring-blue-500 data-[state=open]:ring-offset-1 md:text-base ${textAlignClass}`}
+                  className={`h-12 w-full rounded-md border border-transparent bg-muted/50 pl-12 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 data-[state=open]:ring-2 data-[state=open]:ring-blue-500 data-[state=open]:ring-offset-1 md:text-base ${hoverableFieldClass} ${textAlignClass}`}
                   data-testid="input-hero-checkout"
                 >
                   {displayDate(checkOut)}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-[min(96vw,46rem)] rounded-[1.5rem] border border-border/60 bg-background p-3 shadow-xl sm:p-4" align="start">
-                <div className="inline-flex flex-col gap-4">
+              <PopoverContent className="w-fit max-w-[96vw] rounded-[1.5rem] border border-border/60 bg-background p-3 shadow-xl sm:p-3" align="start">
+                <div className="inline-flex w-fit flex-col gap-2">
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <button
                       type="button"
@@ -564,7 +566,7 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
                   <button
                     id="guests"
                     type="button"
-                    className={`h-12 w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border border-transparent bg-muted/50 pl-12 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 data-[state=open]:ring-2 data-[state=open]:ring-blue-500 data-[state=open]:ring-offset-1 md:text-base ${textAlignClass}`}
+                    className={`h-12 w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border border-transparent bg-muted/50 pl-12 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 data-[state=open]:ring-2 data-[state=open]:ring-blue-500 data-[state=open]:ring-offset-1 md:text-base ${hoverableFieldClass} ${textAlignClass}`}
                     data-testid="input-hero-guests"
                   >
                     {guests} {guestWord}, {rooms} {roomWord}
@@ -579,7 +581,7 @@ export default function SearchBar({ initialParams, onSearch, variant = 'hero' }:
                 </PopoverContent>
               </Popover>
             </div>
-            <Button type="submit" className="h-12 w-full px-6 text-base xl:w-auto" data-testid="button-hero-search" disabled={!checkIn || !checkOut}>
+            <Button type="submit" className={`h-12 w-full px-6 text-base xl:w-auto ${searchButtonHoverClass}`} data-testid="button-hero-search" disabled={!checkIn || !checkOut}>
               {t('searchAction')}
             </Button>
           </div>

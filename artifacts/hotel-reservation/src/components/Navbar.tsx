@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppState } from '../hooks/use-app-state';
 import { Building2, CircleUserRound, Coins, Languages, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,7 @@ const countryOptions = [
   { code: 'GH', name: 'Ghana', flag: '🇬🇭' },
   { code: 'HK', name: 'Hong Kong', flag: '🇭🇰' },
   { code: 'IN', name: 'India', flag: '🇮🇳' },
+  { code: 'US', name: 'United States', flag: '🇺🇸' },
 ];
 
 const currencyOptions = [
@@ -65,6 +66,7 @@ const currencyOptions = [
   { code: 'GHS', name: 'Ghana Cedi' },
   { code: 'HKD', name: 'Hong Kong Dollar' },
   { code: 'IDR', name: 'Indonesian Rupiah' },
+  { code: 'USD', name: 'US Dollar' },
 ];
 
 const languageOptions = [
@@ -72,16 +74,48 @@ const languageOptions = [
   { code: 'AR', name: 'العربية' },
 ];
 
+const countryAutoPreferences: Partial<Record<string, { language: AppLanguage; currency: string }>> = {
+  SA: { language: 'AR', currency: 'SAR' },
+  US: { language: 'EN', currency: 'USD' },
+};
+
+const COUNTRY_STORAGE_KEY = 'nzl-country';
+const CURRENCY_STORAGE_KEY = 'nzl-currency';
+
 export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof useAppState>['navigateTo'] }) {
   const { language, setLanguage, t } = useLocale();
   const [isCountryOpen, setIsCountryOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState('SA');
+  const [selectedCountry, setSelectedCountry] = useState(() => {
+    const storedCountry = window.localStorage.getItem(COUNTRY_STORAGE_KEY);
+    if (storedCountry && countryOptions.some((country) => country.code === storedCountry)) {
+      return storedCountry;
+    }
+    return 'SA';
+  });
   const [countryQuery, setCountryQuery] = useState('');
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [languageQuery, setLanguageQuery] = useState('');
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState('SAR');
+  const [selectedCurrency, setSelectedCurrency] = useState(() => {
+    const storedCurrency = window.localStorage.getItem(CURRENCY_STORAGE_KEY);
+    if (storedCurrency && currencyOptions.some((currency) => currency.code === storedCurrency)) {
+      return storedCurrency;
+    }
+    return 'SAR';
+  });
   const [currencyQuery, setCurrencyQuery] = useState('');
+
+  const handleCountrySelect = (countryCode: string) => {
+    setSelectedCountry(countryCode);
+
+    const autoPreferences = countryAutoPreferences[countryCode];
+    if (autoPreferences) {
+      setLanguage(autoPreferences.language);
+      setSelectedCurrency(autoPreferences.currency);
+    }
+
+    setIsCountryOpen(false);
+  };
 
   const selectedCountryOption = useMemo(
     () => countryOptions.find((country) => country.code === selectedCountry) ?? countryOptions[0],
@@ -117,6 +151,22 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
       currency.name.toLowerCase().includes(query),
     );
   }, [currencyQuery]);
+
+  useEffect(() => {
+    const autoPreferences = countryAutoPreferences[selectedCountry];
+    if (!autoPreferences) return;
+
+    setLanguage(autoPreferences.language);
+    setSelectedCurrency(autoPreferences.currency);
+  }, [selectedCountry, setLanguage]);
+
+  useEffect(() => {
+    window.localStorage.setItem(COUNTRY_STORAGE_KEY, selectedCountry);
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    window.localStorage.setItem(CURRENCY_STORAGE_KEY, selectedCurrency);
+  }, [selectedCurrency]);
 
   return (
     <>
@@ -279,10 +329,7 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
                     <button
                       key={country.code}
                       type="button"
-                      onClick={() => {
-                        setSelectedCountry(country.code);
-                        setIsCountryOpen(false);
-                      }}
+                      onClick={() => handleCountrySelect(country.code)}
                       className="grid w-full grid-cols-[max-content,1fr,max-content] items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-muted/40"
                     >
                       <span className="text-xl sm:text-2xl" aria-hidden>{country.flag}</span>

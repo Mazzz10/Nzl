@@ -45,11 +45,11 @@ function Calendar({
         root: cn("w-fit", defaultClassNames.root),
         months: cn(
           // Increased gap between the two months
-          "relative flex flex-col gap-8 md:flex-row md:gap-10",
+          "relative flex flex-col items-start gap-8 md:flex-row md:items-start md:gap-10",
           defaultClassNames.months
         ),
         month: cn(
-          "flex w-full flex-col gap-4 rounded-xl border border-border/40 bg-background/70 p-2",
+          "flex w-auto flex-col gap-4 rounded-xl border border-border/40 bg-background/70 p-2",
           defaultClassNames.month
         ),
         nav: cn(

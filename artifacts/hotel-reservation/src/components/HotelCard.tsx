@@ -35,6 +35,11 @@ export default function HotelCard({ hotel, onClick }: HotelCardProps) {
   const { t, language } = useLocale();
   const imageUrl = HOTEL_IMAGE_BY_ID[hotel.id] ?? 'https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1400&auto=format&fit=crop';
   const localizedHotelText = getLocalizedHotelText(hotel, language);
+  const hasDiscount = typeof hotel.originalPricePerNight === 'number' && hotel.originalPricePerNight > hotel.pricePerNight;
+  const discountPercent = hasDiscount
+    ? Math.round(((hotel.originalPricePerNight! - hotel.pricePerNight) / hotel.originalPricePerNight!) * 100)
+    : 0;
+  const formatPrice = (price: number) => price.toLocaleString('en-US');
 
   const localizeAmenity = (amenity: string) => {
     switch (amenity.toLowerCase()) {
@@ -70,6 +75,11 @@ export default function HotelCard({ hotel, onClick }: HotelCardProps) {
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+        {hasDiscount && (
+          <Badge className="absolute left-3 top-3 border border-red-200/80 bg-red-700 text-xs font-bold tracking-wide text-white shadow-sm">
+            SAVE {discountPercent}%
+          </Badge>
+        )}
       </div>
 
       <div className="z-10 flex flex-grow flex-col bg-card p-4 sm:p-5 md:p-6">
@@ -115,7 +125,14 @@ export default function HotelCard({ hotel, onClick }: HotelCardProps) {
         <div className="mt-auto flex flex-col gap-4 pt-5 sm:flex-row sm:items-end sm:justify-between sm:pt-6">
           <div>
             <span className="text-xs text-muted-foreground block mb-0.5">{t('hotelStartingFrom')}</span>
-            <span className="text-xl font-serif font-bold text-foreground sm:text-2xl">${hotel.pricePerNight}</span>
+            {hasDiscount && (
+              <div className="mb-0.5 text-sm font-semibold text-red-700/90 line-through decoration-2 decoration-red-600 dark:text-red-300/90 dark:decoration-red-400">
+                ${formatPrice(hotel.originalPricePerNight!)}
+              </div>
+            )}
+            <span className={`text-xl font-serif font-bold sm:text-2xl ${hasDiscount ? 'text-red-700 dark:text-red-300' : 'text-foreground'}`}>
+              ${formatPrice(hotel.pricePerNight)}
+            </span>
             <span className="text-sm text-muted-foreground"> {t('hotelPerNight')}</span>
           </div>
           <Button

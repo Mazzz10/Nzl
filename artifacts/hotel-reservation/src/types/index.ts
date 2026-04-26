@@ -31,6 +31,7 @@ export interface Hotel {
   location: string;
   stars: number;
   pricePerNight: number;
+  originalPricePerNight?: number;
   description: string;
   amenities: string[];
   reviewCount: number;
