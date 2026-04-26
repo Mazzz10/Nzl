@@ -278,10 +278,10 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
               </div>
 
               <div className="mt-8">
-                <h2 className="mb-4 font-serif text-2xl font-bold">Location & Neighborhood</h2>
+                <h2 className="mb-4 font-serif text-2xl font-bold">{t('detailsLocationNeighborhood')}</h2>
                 <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
                   <iframe
-                    title={`Map for ${hotel.name}`}
+                    title={t('detailsMapTitle', { name: hotel.name })}
                     src={locationMapUrl}
                     className="h-48 w-full md:h-80"
                     loading="lazy"
