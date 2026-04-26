@@ -10,17 +10,31 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { KeyRound } from 'lucide-react';
 import { useLocale } from '../lib/i18n';
-import { getGmailUsername, normalizeGmailEmail } from '../lib/email';
+import { normalizeGmailEmail } from '../lib/email';
 
 export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof useAppState>['navigateTo'] }) {
     const { t } = useLocale();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
+    const [submitted, setSubmitted] = useState(false);
+
+    const normalizedEmail = normalizeGmailEmail(email);
+    const isEmailValid = /^[^\s@]+@gmail\.com$/i.test(normalizedEmail.trim());
+    const showEmailError = submitted || email.trim().length > 0;
+    const emailError = showEmailError
+        ? !email.trim()
+            ? t('signInErrEmailRequired')
+            : !isEmailValid
+                ? t('signInErrEmailInvalid')
+                : ''
+        : '';
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setEmail((prev) => normalizeGmailEmail(prev));
+        setSubmitted(true);
+        setEmail(normalizedEmail);
+        if (!isEmailValid) return;
         navigateTo({ name: 'dashboard' });
     };
 
@@ -41,17 +55,19 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
                             <CardDescription>{t('signInDescription')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={handleSubmit} className="space-y-4" data-testid="form-signin">
+                            <form onSubmit={handleSubmit} noValidate className="space-y-4" data-testid="form-signin">
                                 <div className="space-y-2">
                                     <Label htmlFor="signin-email">{t('signInEmail')}</Label>
                                     <GmailInput
                                         id="signin-email"
                                         value={email}
-                                        onChange={(event) => setEmail(getGmailUsername(event.target.value))}
+                                        onChange={(event) => setEmail(event.target.value)}
                                         placeholder={t('signInEmailPlaceholder')}
+                                        aria-invalid={Boolean(emailError)}
                                         required
                                         data-testid="input-signin-email"
                                     />
+                                    {emailError && <p className="text-xs text-destructive">{emailError}</p>}
                                 </div>
 
                                 <div className="space-y-2">

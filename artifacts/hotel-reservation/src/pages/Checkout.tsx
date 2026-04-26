@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { getRoomImageById } from '../lib/room-images';
 import { useLocale } from '../lib/i18n';
-import { getGmailUsername, normalizeGmailEmail } from '../lib/email';
+import { normalizeGmailEmail } from '../lib/email';
 
 export default function Checkout({ hotelId, roomId, params, selectedAddOns, navigateTo }: {
   hotelId: string;
@@ -84,7 +84,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
     }
 
     if (name === 'email') {
-      normalizedValue = getGmailUsername(value);
+      normalizedValue = value;
     }
 
     setFormData(prev => ({ ...prev, [name]: normalizedValue }));
@@ -93,14 +93,13 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
   const trimmedFirstName = formData.firstName.trim();
   const trimmedLastName = formData.lastName.trim();
   const normalizedGuestEmail = normalizeGmailEmail(formData.email);
-  const guestEmailUsername = getGmailUsername(formData.email);
   const trimmedEmail = normalizedGuestEmail.trim();
   const isGmailEmail = /^[^\s@]+@gmail\.com$/i.test(trimmedEmail);
   const isPhoneValid = /^\d{10}$/.test(formData.phone);
 
   const showFirstNameError = guestSubmitted || formData.firstName.length > 0;
   const showLastNameError = guestSubmitted || formData.lastName.length > 0;
-  const showEmailError = guestSubmitted || guestEmailUsername.length > 0;
+  const showEmailError = guestSubmitted || formData.email.trim().length > 0;
   const showPhoneError = guestSubmitted || formData.phone.length > 0;
 
   const firstNameError = showFirstNameError
@@ -110,7 +109,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
     ? (!trimmedLastName ? t('checkoutErrLastNameRequired') : '')
     : '';
   const emailError = showEmailError
-    ? (!guestEmailUsername
+    ? (!formData.email.trim()
       ? t('checkoutErrEmailRequired')
       : (!isGmailEmail ? t('checkoutErrEmailGmail') : ''))
     : '';

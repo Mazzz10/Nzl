@@ -189,6 +189,8 @@ const translations = {
         signInGuest: 'Continue as guest',
         signInNoAccount: "Don't have an account?",
         signInGoToSignUp: 'Sign Up',
+        signInErrEmailRequired: 'Email is required.',
+        signInErrEmailInvalid: 'Enter a valid email address (example@gmail.com).',
 
         signUpTitle: 'Sign Up',
         signUpDescription: 'Create your account to manage stays and rewards.',
@@ -396,6 +398,8 @@ const translations = {
         signInGuest: 'المتابعة كضيف',
         signInNoAccount: 'ليس لديك حساب؟',
         signInGoToSignUp: 'إنشاء حساب',
+        signInErrEmailRequired: 'البريد الإلكتروني مطلوب.',
+        signInErrEmailInvalid: 'أدخل بريدا إلكترونيا صحيحا (example@gmail.com).',
 
         signUpTitle: 'إنشاء حساب',
         signUpDescription: 'أنشئ حسابك لإدارة الإقامات والمكافآت.',

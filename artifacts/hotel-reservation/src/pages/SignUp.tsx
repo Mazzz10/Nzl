@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { KeyRound, User } from 'lucide-react';
 import { useLocale } from '../lib/i18n';
-import { getGmailUsername, normalizeGmailEmail } from '../lib/email';
+import { normalizeGmailEmail } from '../lib/email';
 
 export default function SignUp({ navigateTo }: { navigateTo: ReturnType<typeof useAppState>['navigateTo'] }) {
     const { t } = useLocale();
@@ -22,19 +22,18 @@ export default function SignUp({ navigateTo }: { navigateTo: ReturnType<typeof u
     const trimmedFullName = fullName.trim();
     const normalizedEmail = normalizeGmailEmail(email);
     const trimmedEmail = normalizedEmail.trim();
-    const emailUsername = getGmailUsername(email);
     const isEmailValid = /^[^\s@]+@gmail\.com$/i.test(trimmedEmail);
     const isPasswordLongEnough = password.length >= 6;
     const isPasswordMatch = password === confirmPassword;
 
     const showNameError = submitted && trimmedFullName.length < 2;
-    const showEmailError = submitted || emailUsername.length > 0;
+    const showEmailError = submitted || email.trim().length > 0;
     const showPasswordError = submitted || password.length > 0;
     const showConfirmPasswordError = submitted || confirmPassword.length > 0;
 
     const nameError = showNameError ? t('signUpErrName') : '';
     const emailError = showEmailError
-        ? !emailUsername
+        ? !email.trim()
             ? t('signUpErrEmailRequired')
             : !isEmailValid
                 ? t('signUpErrEmailInvalid')
@@ -70,7 +69,7 @@ export default function SignUp({ navigateTo }: { navigateTo: ReturnType<typeof u
     };
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(getGmailUsername(event.target.value));
+        setEmail(event.target.value);
     };
 
     return (
