@@ -1,5 +1,19 @@
 import { Hotel, Destination, Booking, AddOn } from '../types';
 
+const formatDateInput = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
+const relativeDate = (daysFromToday: number): string => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromToday);
+  return formatDateInput(date);
+};
+
 export const trendingDestinations: Destination[] = [
   { id: '1', name: 'Paris', country: 'France', image: 'bg-gradient-to-tr from-blue-900 to-amber-200' },
   { id: '2', name: 'Bali', country: 'Indonesia', image: 'bg-gradient-to-tr from-emerald-800 to-teal-400' },
@@ -307,39 +321,39 @@ export const sampleBookings: Booking[] = [
     id: 'b1',
     hotelId: 'h2',
     hotelName: 'Aman Tokyo',
-    checkIn: '2023-10-15',
-    checkOut: '2023-10-20',
+    checkIn: relativeDate(45),
+    checkOut: relativeDate(50),
     roomName: 'Deluxe Room',
     guests: 2,
     totalAmount: 5500,
-    status: 'Completed',
-    bookingDate: '2023-08-01',
+    status: 'Confirmed',
+    bookingDate: relativeDate(-7),
     image: 'bg-gradient-to-br from-slate-800 to-slate-600'
   },
   {
     id: 'b2',
     hotelId: 'h4',
     hotelName: 'Canaves Oia',
-    checkIn: '2023-06-10',
-    checkOut: '2023-06-14',
+    checkIn: relativeDate(-320),
+    checkOut: relativeDate(-316),
     roomName: 'Plunge Pool Suite',
     guests: 2,
     totalAmount: 4200,
     status: 'Completed',
-    bookingDate: '2023-02-15',
+    bookingDate: relativeDate(-430),
     image: 'bg-gradient-to-br from-sky-900 to-sky-400'
   },
   {
     id: 'b3',
     hotelId: 'h1',
     hotelName: 'Le Meurice',
-    checkIn: '2022-12-24',
-    checkOut: '2022-12-28',
+    checkIn: relativeDate(-520),
+    checkOut: relativeDate(-516),
     roomName: 'Superior Room',
     guests: 2,
     totalAmount: 3400,
     status: 'Completed',
-    bookingDate: '2022-09-10',
+    bookingDate: relativeDate(-620),
     image: 'bg-gradient-to-br from-stone-800 to-stone-400'
   }
 ];

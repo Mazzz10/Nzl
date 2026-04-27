@@ -30,11 +30,13 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
                 : ''
         : '';
 
+    const isFormFilled = normalizedEmail.trim().length > 0 && password.trim().length > 0;
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setSubmitted(true);
         setEmail(normalizedEmail);
-        if (!isEmailValid) return;
+        if (!isFormFilled || !isEmailValid) return;
         navigateTo({ name: 'dashboard' });
     };
 
@@ -111,6 +113,7 @@ export default function SignIn({ navigateTo }: { navigateTo: ReturnType<typeof u
                                     type="submit"
                                     className="w-full transition-colors duration-200 hover:bg-primary/90"
                                     data-testid="button-signin-submit"
+                                    disabled={!isFormFilled}
                                 >
                                     {t('signInSubmit')}
                                 </Button>

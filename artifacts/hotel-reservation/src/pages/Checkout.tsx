@@ -119,6 +119,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
       : (!isPhoneValid ? t('checkoutErrPhoneDigits') : ''))
     : '';
 
+  const isGuestInfoFilled = Boolean(trimmedFirstName && trimmedLastName && trimmedEmail && formData.phone);
   const isGuestInfoValid = Boolean(trimmedFirstName && trimmedLastName && isGmailEmail && isPhoneValid);
 
   const cardDigits = formData.cardNumber.replace(/\s/g, '');
@@ -168,6 +169,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
       : (!isCardNameValid ? t('checkoutErrCardNameInvalid') : ''))
     : '';
 
+  const isPaymentFilled = Boolean(cardDigits && formData.expiry.trim() && formData.cvv && trimmedCardName);
   const isPaymentValid = isCardNumberValid && isCvvValid && isExpiryMonthValid && isExpiryNotPast && isCardNameValid;
 
   const handleConfirm = () => {
@@ -402,6 +404,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                         className="h-12 w-full text-base transition-colors duration-200 hover:bg-primary/80 sm:text-lg"
                         onClick={handleContinueToPayment}
                         data-testid="button-continue-2"
+                        disabled={!isGuestInfoFilled}
                       >
                         {t('checkoutContinuePayment')}
                       </Button>
@@ -506,6 +509,7 @@ export default function Checkout({ hotelId, roomId, params, selectedAddOns, navi
                         className="h-12 w-full text-base transition-colors duration-200 hover:bg-primary/80 sm:text-lg"
                         onClick={handleConfirmBooking}
                         data-testid="button-confirm-booking"
+                        disabled={!isPaymentFilled}
                       >
                         {t('checkoutConfirmBooking')}
                       </Button>

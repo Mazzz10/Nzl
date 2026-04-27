@@ -54,6 +54,12 @@ export default function SignUp({ navigateTo }: { navigateTo: ReturnType<typeof u
                 : ''
         : '';
 
+    const isFormFilled =
+        trimmedFullName.length > 0 &&
+        trimmedEmail.length > 0 &&
+        password.trim().length > 0 &&
+        confirmPassword.trim().length > 0;
+
     const isFormValid =
         trimmedFullName.length > 1 &&
         isEmailValid &&
@@ -64,7 +70,7 @@ export default function SignUp({ navigateTo }: { navigateTo: ReturnType<typeof u
         event.preventDefault();
         setSubmitted(true);
         setEmail(normalizedEmail);
-        if (!isFormValid) return;
+        if (!isFormFilled || !isFormValid) return;
         navigateTo({ name: 'dashboard' });
     };
 
@@ -165,6 +171,7 @@ export default function SignUp({ navigateTo }: { navigateTo: ReturnType<typeof u
                                     type="submit"
                                     className="w-full transition-colors duration-200 hover:bg-primary/90"
                                     data-testid="button-signup-submit"
+                                    disabled={!isFormFilled}
                                 >
                                     {t('signUpCreateAccount')}
                                 </Button>
