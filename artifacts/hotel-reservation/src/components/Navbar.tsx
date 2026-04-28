@@ -93,8 +93,6 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
     return 'SA';
   });
   const [countryQuery, setCountryQuery] = useState('');
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [languageQuery, setLanguageQuery] = useState('');
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(() => {
     const storedCurrency = window.localStorage.getItem(CURRENCY_STORAGE_KEY);
@@ -117,6 +115,10 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
     setIsCountryOpen(false);
   };
 
+  const handleLanguageToggle = () => {
+    setLanguage(language === 'EN' ? 'AR' : 'EN');
+  };
+
   const selectedCountryOption = useMemo(
     () => countryOptions.find((country) => country.code === selectedCountry) ?? countryOptions[0],
     [selectedCountry],
@@ -131,16 +133,6 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
       country.name.toLowerCase().includes(query),
     );
   }, [countryQuery]);
-
-  const filteredLanguages = useMemo(() => {
-    const query = languageQuery.trim().toLowerCase();
-    if (!query) return languageOptions;
-
-    return languageOptions.filter((language) =>
-      language.code.toLowerCase().includes(query) ||
-      language.name.toLowerCase().includes(query),
-    );
-  }, [languageQuery]);
 
   const filteredCurrencies = useMemo(() => {
     const query = currencyQuery.trim().toLowerCase();
@@ -197,7 +189,7 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
                 type="button"
                 className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 hover:bg-primary/10 hover:text-primary transition-colors"
                 data-testid="button-nav-language"
-                onClick={() => setIsLanguageOpen(true)}
+                onClick={handleLanguageToggle}
               >
                 <Languages className="h-3.5 w-3.5" />
                 <span>{language}</span>
@@ -273,7 +265,7 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
                   <DropdownMenuShortcut>{selectedCountryOption.code}</DropdownMenuShortcut>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onSelect={() => setIsLanguageOpen(true)} data-testid="menu-item-mobile-language">
+                <DropdownMenuItem onSelect={handleLanguageToggle} data-testid="menu-item-mobile-language">
                   <Languages className="h-4 w-4" />
                   <span>{t('navLanguage')}</span>
                   <DropdownMenuShortcut>{language}</DropdownMenuShortcut>
@@ -334,62 +326,13 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
                     >
                       <span className="text-xl sm:text-2xl" aria-hidden>{country.flag}</span>
                       <span className="text-base leading-tight text-foreground/95 sm:text-xl md:text-2xl">{country.name}</span>
-                      {isSelected ? <span className="ml-1 text-2xl font-bold leading-none text-green-600">✓</span> : null}
+                      {isSelected ? <span className="text-2xl font-bold leading-none text-green-600">✓</span> : null}
                     </button>
                   );
                 })}
               </div>
             ) : (
               <p className="px-3 py-8 text-lg text-muted-foreground">{t('navNoCountriesFound')}</p>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isLanguageOpen} onOpenChange={setIsLanguageOpen}>
-        <DialogContent className="max-h-[90vh] max-w-[min(96vw,1180px)] gap-0 overflow-hidden rounded-[24px] border-border/70 p-0">
-          <div className="border-b border-border/70 px-4 py-4 sm:px-6 sm:py-5 md:px-8">
-            <DialogTitle className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">{t('navLanguage')}</DialogTitle>
-          </div>
-
-          <div className="px-4 py-4 sm:px-6 sm:py-5 md:px-8">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                value={languageQuery}
-                onChange={(e) => setLanguageQuery(e.target.value)}
-                placeholder={t('navSearch')}
-                className="h-12 w-full rounded-xl border border-blue-500/70 bg-background pl-12 pr-4 text-base text-foreground outline-none placeholder:text-muted-foreground/80 focus:ring-2 focus:ring-blue-500/40 sm:h-14 sm:pl-14 sm:pr-5 sm:text-xl md:text-2xl"
-              />
-            </div>
-          </div>
-
-          <div className="max-h-[62vh] overflow-y-auto px-4 pb-5 sm:px-6 sm:pb-6 md:px-8 md:pb-8">
-            {filteredLanguages.length > 0 ? (
-              <div className="grid grid-cols-1 gap-x-10 gap-y-1 py-2 md:grid-cols-2 lg:grid-cols-3">
-                {filteredLanguages.map((langOption) => {
-                  const isSelected = langOption.code === language;
-
-                  return (
-                    <button
-                      key={langOption.code}
-                      type="button"
-                      onClick={() => {
-                        setLanguage(langOption.code as AppLanguage);
-                        setIsLanguageOpen(false);
-                      }}
-                      className="grid w-full grid-cols-[max-content,1fr,max-content] items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-muted/40"
-                    >
-                      <span className="min-w-[3.2rem] text-base font-bold tracking-tight text-foreground sm:min-w-[3.5rem] sm:text-xl md:text-2xl">{langOption.code}</span>
-                      <span className="text-base leading-tight text-foreground/95 sm:text-xl md:text-2xl">{langOption.name}</span>
-                      {isSelected ? <span className="ml-1 text-2xl font-bold leading-none text-blue-600">✓</span> : null}
-                    </button>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="px-3 py-8 text-lg text-muted-foreground">{t('navNoLanguagesFound')}</p>
             )}
           </div>
         </DialogContent>
@@ -428,11 +371,13 @@ export default function Navbar({ navigateTo }: { navigateTo: ReturnType<typeof u
                         setSelectedCurrency(currency.code);
                         setIsCurrencyOpen(false);
                       }}
-                      className="grid w-full grid-cols-[max-content,1fr,max-content] items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-muted/40"
+                      className="grid w-full grid-cols-[max-content,1fr] items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-muted/40"
                     >
-                      <span className="min-w-[3.2rem] text-base font-bold tracking-tight text-foreground sm:min-w-[3.5rem] sm:text-xl md:text-2xl">{currency.code}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="min-w-[3.2rem] text-base font-bold tracking-tight text-foreground sm:min-w-[3.5rem] sm:text-xl md:text-2xl">{currency.code}</span>
+                        {isSelected ? <span className="text-2xl font-bold leading-none text-green-600">✓</span> : null}
+                      </div>
                       <span className="text-base leading-tight text-foreground/95 sm:text-xl md:text-2xl">{currency.name}</span>
-                      {isSelected ? <span className="ml-1 text-2xl font-bold leading-none text-green-600">✓</span> : null}
                     </button>
                   );
                 })}
