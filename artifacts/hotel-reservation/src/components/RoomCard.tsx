@@ -16,9 +16,21 @@ interface RoomCardProps {
   selectedAddOns: string[];
   onSelect: () => void;
   onToggleAddOn: (addOnId: string) => void;
+  isCompared?: boolean;
+  compareDisabled?: boolean;
+  onToggleCompare?: () => void;
 }
 
-export default function RoomCard({ room, isSelected, selectedAddOns, onSelect, onToggleAddOn }: RoomCardProps) {
+export default function RoomCard({
+  room,
+  isSelected,
+  selectedAddOns,
+  onSelect,
+  onToggleAddOn,
+  isCompared = false,
+  compareDisabled = false,
+  onToggleCompare
+}: RoomCardProps) {
   const { t, language } = useLocale();
   const roomImage = getRoomImageById(room.id);
   const localizedRoomText = getLocalizedRoomText(room, language);
@@ -52,6 +64,20 @@ export default function RoomCard({ room, isSelected, selectedAddOns, onSelect, o
             <div className="text-right">
               <span className="font-serif text-xl font-bold sm:text-2xl">${room.pricePerNight}</span>
               <span className="text-sm text-muted-foreground block">{t('hotelPerNight')}</span>
+              {onToggleCompare && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={isCompared ? 'secondary' : 'outline'}
+                  className={`mt-3 w-full sm:w-auto ${isCompared ? 'hover:opacity-90' : 'hover:border-primary/60 hover:bg-primary/5'}`}
+                  onClick={onToggleCompare}
+                  disabled={compareDisabled && !isCompared}
+                  aria-pressed={isCompared}
+                  title={compareDisabled && !isCompared ? t('detailsCompareHint') : t('detailsCompare')}
+                >
+                  {isCompared ? t('detailsCompared') : t('detailsCompare')}
+                </Button>
+              )}
             </div>
           </div>
 

@@ -9,11 +9,13 @@ import { motion } from 'framer-motion';
 import { MapPin, Star, ChevronLeft, ChevronRight, Wifi, Coffee, Dumbbell, PawPrint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { useLocale } from '../lib/i18n';
-import { getLocalizedHotelText } from '../lib/hotel-localization';
+import { getLocalizedHotelText, getLocalizedRoomText } from '../lib/hotel-localization';
+import { getRoomImageById } from '../lib/room-images';
 
 const HOTEL_GALLERY_BY_ID: Record<string, string[]> = {
   h1: [
@@ -61,25 +63,76 @@ const HOTEL_GALLERY_BY_ID: Record<string, string[]> = {
 };
 
 export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId: string; params: SearchParams; navigateTo: ReturnType<typeof useAppState>['navigateTo'] }) {
-  const { t, language } = useLocale();
+  const { t, language, isRtl } = useLocale();
   const hotel = sampleHotels.find(h => h.id === hotelId);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [compareRoomIds, setCompareRoomIds] = useState<string[]>([]);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [compareImageByRoomId, setCompareImageByRoomId] = useState<Record<string, number>>({});
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    setCompareRoomIds([]);
+    setIsCompareOpen(false);
+    setCompareImageByRoomId({});
+  }, [hotelId]);
+
+  useEffect(() => {
+    if (isCompareOpen && compareRoomIds.length < 2) {
+      setIsCompareOpen(false);
+    }
+  }, [compareRoomIds.length, isCompareOpen]);
+
+  useEffect(() => {
+    setCompareImageByRoomId(prev => {
+      const next: Record<string, number> = {};
+
+      compareRoomIds.forEach((roomId) => {
+        if (prev[roomId] !== undefined) {
+          next[roomId] = prev[roomId];
+        }
+      });
+
+      return next;
+    });
+  }, [compareRoomIds]);
 
   if (!hotel) return <div>{t('detailsHotelNotFound')}</div>;
 
   const hotelGallery = HOTEL_GALLERY_BY_ID[hotel.id] ?? HOTEL_GALLERY_BY_ID.h1;
   const localizedHotelText = getLocalizedHotelText(hotel, language);
 
+  const getCompareImages = (roomId: string) => {
+    const roomImage = getRoomImageById(roomId);
+    const images = [
+      ...(roomImage ? [roomImage] : []),
+      ...hotelGallery,
+    ];
+
+    return images.filter((image, index) => images.indexOf(image) === index).slice(0, 5);
+  };
+
   const handleRoomSelect = (roomId: string) => {
     setSelectedRoomId(roomId);
     setSelectedAddOnIds([]); // Reset add-ons when room changes
+  };
+
+  const toggleCompareRoom = (roomId: string) => {
+    setCompareRoomIds(prev => {
+      if (prev.includes(roomId)) {
+        return prev.filter(id => id !== roomId);
+      }
+      if (prev.length >= 3) {
+        return prev;
+      }
+      return [...prev, roomId];
+    });
   };
 
   const handleToggleAddOn = (addOnId: string) => {
@@ -91,6 +144,7 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
   };
 
   const selectedRoom = hotel.roomTypes.find(r => r.id === selectedRoomId) || null;
+  const compareRooms = hotel.roomTypes.filter(room => compareRoomIds.includes(room.id));
 
   const mainImage = hotelGallery[selectedImageIndex] ?? hotelGallery[0];
   const locationMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(localizedHotelText.location)}&output=embed`;
@@ -296,18 +350,41 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
 
             {/* Rooms */}
             <section>
-              <h2 className="font-serif text-2xl font-semibold mb-6">{t('detailsChooseRoom')}</h2>
+              <div className={`mb-6 flex flex-wrap items-center justify-between gap-3 ${isRtl ? 'text-right' : 'text-left'}`}>
+                <h2 className="font-serif text-2xl font-semibold">{t('detailsChooseRoom')}</h2>
+                <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse' : ''}`}>
+                  <span className="text-xs text-muted-foreground">{t('detailsCompareHint')}</span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsCompareOpen(true)}
+                    disabled={compareRoomIds.length < 2}
+                    className="hover:border-primary/60 hover:bg-primary/5"
+                  >
+                    {t('detailsCompare')} ({compareRoomIds.length})
+                  </Button>
+                </div>
+              </div>
               <div className="space-y-6">
-                {hotel.roomTypes.map(room => (
-                  <RoomCard
-                    key={room.id}
-                    room={room}
-                    isSelected={selectedRoomId === room.id}
-                    selectedAddOns={selectedAddOnIds}
-                    onSelect={() => handleRoomSelect(room.id)}
-                    onToggleAddOn={handleToggleAddOn}
-                  />
-                ))}
+                {hotel.roomTypes.map(room => {
+                  const isCompared = compareRoomIds.includes(room.id);
+                  const compareDisabled = compareRoomIds.length >= 3 && !isCompared;
+
+                  return (
+                    <RoomCard
+                      key={room.id}
+                      room={room}
+                      isSelected={selectedRoomId === room.id}
+                      selectedAddOns={selectedAddOnIds}
+                      onSelect={() => handleRoomSelect(room.id)}
+                      onToggleAddOn={handleToggleAddOn}
+                      isCompared={isCompared}
+                      compareDisabled={compareDisabled}
+                      onToggleCompare={() => toggleCompareRoom(room.id)}
+                    />
+                  );
+                })}
               </div>
             </section>
 
@@ -358,6 +435,60 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
         </div>
       </div>
 
+      {compareRoomIds.length > 0 && (
+        <div className="fixed inset-x-0 bottom-4 z-40 px-4">
+          <div
+            dir={isRtl ? 'rtl' : 'ltr'}
+            className="mx-auto flex max-w-5xl flex-col gap-3 rounded-2xl border border-border/60 bg-background/95 p-4 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm font-semibold">{t('detailsCompareRooms')}</span>
+              {compareRooms.map(room => {
+                const localizedRoomText = getLocalizedRoomText(room, language);
+
+                return (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => toggleCompareRoom(room.id)}
+                    className="flex items-center gap-2 rounded-full border border-border/60 bg-muted/30 px-3 py-1 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
+                    aria-label={`${t('detailsCompareRemove')} ${localizedRoomText.name}`}
+                  >
+                    {localizedRoomText.name}
+                    <span className="text-xs text-muted-foreground">×</span>
+                  </button>
+                );
+              })}
+              {compareRoomIds.length < 2 && (
+                <span className="text-xs text-muted-foreground">
+                  {t('detailsCompareSelectMore', { count: 2 - compareRoomIds.length })}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setCompareRoomIds([])}
+                className="hover:bg-muted"
+              >
+                {t('detailsCompareClear')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsCompareOpen(true)}
+                disabled={compareRoomIds.length < 2}
+                className="hover:bg-primary/90"
+              >
+                {t('detailsCompareNow')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
         <DialogContent className="max-h-[92vh] max-w-[min(95vw,1200px)] overflow-hidden rounded-2xl p-0">
           <div className="border-b border-border/60 px-4 py-4 sm:px-6">
@@ -385,6 +516,156 @@ export default function HotelDetails({ hotelId, params, navigateTo }: { hotelId:
           </div>
         </DialogContent>
       </Dialog>
+
+      <Drawer open={isCompareOpen} onOpenChange={setIsCompareOpen}>
+        <DrawerContent className="max-h-[85vh]" dir={isRtl ? 'rtl' : 'ltr'}>
+          <DrawerHeader className={isRtl ? 'text-right sm:text-right' : 'text-left sm:text-left'}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <DrawerTitle>{t('detailsCompareRooms')}</DrawerTitle>
+                <DrawerDescription>{t('detailsCompareDescription')}</DrawerDescription>
+              </div>
+              {compareRoomIds.length > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCompareRoomIds([])}
+                  className="hover:bg-muted"
+                >
+                  {t('detailsCompareClearAll')}
+                </Button>
+              )}
+            </div>
+          </DrawerHeader>
+          <div className="flex-1 overflow-y-auto px-4 pb-6">
+            {compareRooms.length < 2 ? (
+              <div className="rounded-xl border border-dashed border-border/60 bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                {t('detailsCompareMin')}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {compareRooms.map(room => {
+                  const compareImages = getCompareImages(room.id);
+                  const activeIndex = compareImageByRoomId[room.id] ?? 0;
+                  const activeImage = compareImages[activeIndex] ?? compareImages[0];
+                  const totalImages = compareImages.length;
+                  const localizedRoomText = getLocalizedRoomText(room, language);
+                  const amenityPreview = room.amenities.slice(0, 4);
+                  const handlePrevImage = () => {
+                    if (totalImages < 2) return;
+                    setCompareImageByRoomId(prev => {
+                      const currentIndex = prev[room.id] ?? 0;
+                      return { ...prev, [room.id]: (currentIndex - 1 + totalImages) % totalImages };
+                    });
+                  };
+                  const handleNextImage = () => {
+                    if (totalImages < 2) return;
+                    setCompareImageByRoomId(prev => {
+                      const currentIndex = prev[room.id] ?? 0;
+                      return { ...prev, [room.id]: (currentIndex + 1) % totalImages };
+                    });
+                  };
+
+                  return (
+                    <div key={room.id} className="overflow-hidden rounded-xl border border-border/60 bg-card/50">
+                      <div className="relative aspect-video w-full overflow-hidden bg-muted/20">
+                        {activeImage ? (
+                          <img
+                            src={activeImage}
+                            alt={`${localizedRoomText.name} photo`}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className={`h-full w-full ${room.image} bg-cover bg-center`} />
+                        )}
+                        {totalImages > 1 && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={handlePrevImage}
+                              className="absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/65"
+                              aria-label={t('detailsComparePrevImage')}
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleNextImage}
+                              className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/65"
+                              aria-label={t('detailsCompareNextImage')}
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      <div className="space-y-3 p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-serif text-lg font-semibold">{localizedRoomText.name}</h3>
+                          {selectedRoomId === room.id && (
+                            <Badge variant="secondary">{t('roomSelected')}</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{localizedRoomText.description}</p>
+                        <div className="grid gap-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">{t('detailsCompareBed')}</span>
+                            <span className="font-medium">{localizedRoomText.bedType}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">{t('detailsCompareGuests')}</span>
+                            <span className="font-medium">{t('roomUpToGuests', { count: room.maxGuests })}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">{t('detailsComparePrice')}</span>
+                            <span className="font-medium">${room.pricePerNight}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {amenityPreview.map(amenity => (
+                            <Badge key={amenity} variant="secondary" className="text-xs">
+                              {amenity}
+                            </Badge>
+                          ))}
+                          {room.amenities.length > amenityPreview.length && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{room.amenities.length - amenityPreview.length}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => {
+                              handleRoomSelect(room.id);
+                              setIsCompareOpen(false);
+                            }}
+                            className="hover:bg-primary/90"
+                          >
+                            {t('roomSelectThis')}
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => toggleCompareRoom(room.id)}
+                            className="hover:border-primary/60 hover:bg-primary/5"
+                          >
+                            {t('detailsCompareRemove')}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
